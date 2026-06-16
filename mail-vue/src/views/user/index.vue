@@ -227,8 +227,8 @@
     </el-dialog>
     <el-dialog class="account-dialog" v-model="detailsShow" :title="t('userDetails')"  >
       <div class="details">
-        <div v-if="userDetails.username"><span class="details-item-title">LinuxDo:</span>
-          <el-avatar :src="userDetails.avatar" :size="30" class="linuxdo-avatar"  />
+        <div v-if="userDetails.username"><span class="details-item-title">OIDC:</span>
+          <el-avatar :src="userDetails.avatar" :size="30" class="oidc-avatar"  />
           <span style="margin: 0 10px">用户名：{{userDetails.username}}</span>
           <span>
                     等级：<el-tag type="success">{{userDetails.trustLevel}}</el-tag>
@@ -1147,7 +1147,7 @@ function adjustWidth() {
   }
 }
 
-:deep(.linuxdo-avatar) {
+:deep(.oidc-avatar) {
   position: relative !important;
   top: 10px;
 }

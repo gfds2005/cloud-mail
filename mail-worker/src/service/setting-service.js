@@ -49,15 +49,20 @@ const settingService = {
 		setting.domainList = domainList;
 
 
-		let linuxdoSwitch = c.env.linuxdo_switch;
+		let oidcSwitch = c.env.oidc_switch ?? c.env.OIDC_SWITCH ?? c.env.linuxdo_switch;
 		let projectLink = c.env.project_link;
+		const oidcClientId = c.env.oidc_client_id ?? c.env.OIDC_CLIENT_ID ?? c.env.linuxdo_client_id;
+		const oidcCallbackUrl = c.env.oidc_callback_url ?? c.env.OIDC_CALLBACK_URL ?? c.env.linuxdo_callback_url;
+		const oidcIssuer = c.env.oidc_issuer ?? c.env.OIDC_ISSUER ?? c.env.linuxdo_issuer ?? 'https://connect.linux.do';
+		const oidcScopes = c.env.oidc_scopes ?? c.env.OIDC_SCOPES ?? c.env.linuxdo_scopes ?? 'openid profile email';
+		const oidcProviderName = c.env.oidc_provider_name ?? c.env.OIDC_PROVIDER_NAME ?? c.env.linuxdo_provider_name ?? 'OIDC';
 
-		if (typeof linuxdoSwitch === 'string' && linuxdoSwitch === 'true') {
-			linuxdoSwitch = true
-		} else if (linuxdoSwitch === true) {
-			linuxdoSwitch = true
+		if (typeof oidcSwitch === 'string' && oidcSwitch === 'true') {
+			oidcSwitch = true
+		} else if (oidcSwitch === true) {
+			oidcSwitch = true
 		} else {
-			linuxdoSwitch = false
+			oidcSwitch = false
 		}
 
 		if (typeof projectLink === 'string' && projectLink === 'false') {
@@ -70,9 +75,15 @@ const settingService = {
 
 		setting.projectLink = projectLink;
 
-		setting.linuxdoClientId = c.env.linuxdo_client_id;
-		setting.linuxdoCallbackUrl = c.env.linuxdo_callback_url;
-		setting.linuxdoSwitch = linuxdoSwitch;
+		setting.oidcClientId = oidcClientId;
+		setting.oidcCallbackUrl = oidcCallbackUrl;
+		setting.oidcIssuer = oidcIssuer;
+		setting.oidcScopes = oidcScopes;
+		setting.oidcProviderName = oidcProviderName;
+		setting.oidcSwitch = oidcSwitch;
+		setting.linuxdoClientId = oidcClientId;
+		setting.linuxdoCallbackUrl = oidcCallbackUrl;
+		setting.linuxdoSwitch = oidcSwitch;
 
 		setting.emailPrefixFilter = setting.emailPrefixFilter.split(",").filter(Boolean);
 
@@ -228,6 +239,12 @@ const settingService = {
 			noticeOffset: settingRow.noticeOffset,
 			notice: settingRow.notice,
 			loginDomain: settingRow.loginDomain,
+			oidcClientId: settingRow.oidcClientId,
+			oidcCallbackUrl: settingRow.oidcCallbackUrl,
+			oidcIssuer: settingRow.oidcIssuer,
+			oidcScopes: settingRow.oidcScopes,
+			oidcProviderName: settingRow.oidcProviderName,
+			oidcSwitch: settingRow.oidcSwitch,
 			linuxdoClientId: settingRow.linuxdoClientId,
 			linuxdoCallbackUrl: settingRow.linuxdoCallbackUrl,
 			linuxdoSwitch: settingRow.linuxdoSwitch,

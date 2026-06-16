@@ -44,8 +44,8 @@
           <el-button class="btn" type="primary" @click="submit" :loading="loginLoading"
           >{{ $t('loginBtn') }}
           </el-button>
-          <el-button class="btn" v-if="settingStore.settings.linuxdoSwitch"  style="margin-top: 10px"  @click="linuxDoLogin">
-            <el-avatar src="/image/linuxdo.webp" :size="18" style="margin-right: 10px" />LinuxDo
+          <el-button class="btn" v-if="settingStore.settings.oidcSwitch"  style="margin-top: 10px"  @click="oidcLogin">
+            {{ settingStore.settings.oidcProviderName || 'OIDC' }}
           </el-button>
         </div>
         <div v-show="show !== 'login'">
@@ -94,8 +94,8 @@
           <el-button class="btn" style="margin: 0" type="primary" @click="submitRegister" :loading="registerLoading"
           >{{ $t('regBtn') }}
           </el-button>
-          <el-button v-if="settingStore.settings.linuxdoSwitch" class="btn" style="margin-top: 10px"  @click="linuxDoLogin">
-            <el-avatar src="/image/linuxdo.webp" :size="18" style="margin-right: 10px" />LinuxDo
+          <el-button v-if="settingStore.settings.oidcSwitch" class="btn" style="margin-top: 10px"  @click="oidcLogin">
+            {{ settingStore.settings.oidcProviderName || 'OIDC' }}
           </el-button>
         </div>
         <template v-if="settingStore.settings.register === 0">
@@ -162,7 +162,7 @@ import {cvtR2Url} from "@/utils/convert.js";
 import {loginUserInfo} from "@/request/my.js";
 import {permsToRouter} from "@/perm/perm.js";
 import {useI18n} from "vue-i18n";
-import {oauthBindUser, oauthLinuxDoLogin} from "@/request/ouath.js";
+import {oauthBindUser, oauthOidcAuthorize, oauthOidcLogin} from "@/request/ouath.js";
 
 const {t} = useI18n();
 const accountStore = useAccountStore();
@@ -261,16 +261,19 @@ const getEmailName = (email) => {
   return email.split('@')[0]
 }
 
-function linuxDoLogin() {
-  const clientId = settingStore.settings.linuxdoClientId
-  const redirectUri = encodeURIComponent(settingStore.settings.linuxdoCallbackUrl)
-  window.location.href =
-      `https://connect.linux.do/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid+profile+email`
+async function oidcLogin() {
+  oauthLoading.value = true
+  try {
+    const data = await oauthOidcAuthorize()
+    window.location.href = data.authorizeUrl
+  } catch (e) {
+    oauthLoading.value = false
+  }
 }
 
-linuxDoGetUser();
+oidcGetUser();
 
-async function linuxDoGetUser() {
+async function oidcGetUser() {
 
   const params = new URLSearchParams(window.location.search)
   const code = params.get('code')
@@ -278,7 +281,7 @@ async function linuxDoGetUser() {
   if (code) {
 
     oauthLoading.value = true
-    oauthLinuxDoLogin(code).then(data => {
+    oauthOidcLogin(code).then(data => {
 
       bindForm.oauthUserId = data.userInfo.oauthUserId;
 
